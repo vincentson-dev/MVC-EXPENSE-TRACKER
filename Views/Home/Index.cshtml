@@ -1,0 +1,456 @@
+﻿@{
+    ViewData["Title"] = "Finance Tracker";
+    
+    // Helper function to format currency
+    string FormatCurrency(string amount)
+    {
+        if (decimal.TryParse(amount, out decimal value))
+        {
+            return value.ToString("N2");
+        }
+        return amount;
+    }
+}
+
+<style>
+/* Improved balance cards */
+.balance-card {
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.balance-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--primary-color);
+}
+
+.balance-card.positive {
+    background: rgba(39, 174, 96, 0.1);
+}
+
+.balance-card.negative {
+    background: rgba(231, 76, 60, 0.1);
+}
+
+/* Modern form styling */
+.quick-actions-card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Enhanced table styling */
+.transactions-card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+}
+</style>
+
+<div class="container-fluid px-4 py-3">
+    <!-- Enhanced Header -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="main-title fade-in-up">💰 Personal Finance Tracker</h1>
+            <p class="text-center text-muted mb-4 fade-in-up" style="animation-delay: 0.2s;">
+                Take control of your finances with smart tracking and insights
+            </p>
+        </div>
+    </div>
+
+    <!-- Enhanced Net Balance Row -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card balance-card @(ViewBag.NetBalanceValue >= 0 ? "positive" : "negative") fade-in-up" 
+                 style="animation-delay: 0.3s; background-color: @(ViewBag.NetBalanceValue >= 0 ? "var(--success-color)" : "var(--danger-color)"); color: white;">
+                <div class="card-body text-center py-4">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <i class="fas @(ViewBag.NetBalanceValue >= 0 ? "fa-arrow-trend-up" : "fa-arrow-trend-down") fa-2x me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-1" style="opacity: 0.9;">Net Balance</h5>
+                            <h2 class="card-text mb-0 fw-bold">₱@ViewBag.NetBalance</h2>
+                        </div>
+                    </div>
+                    <small style="opacity: 0.8;" class="d-block">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Income - Expenses - Savings - Emergency Fund
+                    </small>
+                    <div class="mt-3">
+                        <span class="badge bg-white @(ViewBag.NetBalanceValue >= 0 ? "text-success" : "text-danger")">
+                            @(ViewBag.NetBalanceValue >= 0 ? "✓ Positive Balance" : "⚠ Negative Balance")
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Summary Cards -->
+    <div class="row mb-5 g-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card summary-card fade-in-up" 
+                 style="animation-delay: 0.4s; border-left: 4px solid var(--success-color);">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-wallet fa-2x" style="color: var(--success-color);"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="card-title mb-1 text-muted">Total Income</h6>
+                            <h3 class="card-text mb-0 fw-bold" style="color: var(--primary-color);">₱@ViewBag.TotalIncome</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card summary-card fade-in-up" 
+                 style="animation-delay: 0.5s; border-left: 4px solid var(--danger-color);">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-credit-card fa-2x" style="color: var(--danger-color);"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="card-title mb-1 text-muted">Total Expenses</h6>
+                            <h3 class="card-text mb-0 fw-bold" style="color: var(--primary-color);">₱@ViewBag.TotalExpenses</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card summary-card fade-in-up" 
+                 style="animation-delay: 0.6s; border-left: 4px solid var(--info-color);">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-piggy-bank fa-2x" style="color: var(--info-color);"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="card-title mb-1 text-muted">Total Savings</h6>
+                            <h3 class="card-text mb-0 fw-bold" style="color: var(--primary-color);">₱@ViewBag.TotalSavings</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card summary-card fade-in-up" 
+                 style="animation-delay: 0.7s; border-left: 4px solid var(--warning-color);">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-shield-alt fa-2x" style="color: var(--warning-color);"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="card-title mb-1 text-muted">Emergency Fund</h6>
+                            <h3 class="card-text mb-0 fw-bold" style="color: var(--primary-color);">₱@ViewBag.TotalEmergencyFund</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Quick Actions -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card quick-actions-card fade-in-up" style="animation-delay: 0.8s;">
+                <div class="card-header border-0" style="background-color: var(--primary-color); color: white;">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-bolt fa-lg me-3"></i>
+                        <h5 class="mb-0 fw-bold">Quick Actions</h5>
+                        <span class="badge bg-light text-primary ms-auto">Add Transaction</span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form id="addTransactionForm" method="post">
+                        <div class="row g-4 align-items-end">
+                            <div class="col-lg-3 col-md-6">
+                                <label class="form-label fw-semibold text-muted mb-2">
+                                    <i class="fas fa-dollar-sign text-success me-1"></i>Amount
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="fas fa-peso-sign text-success"></i>
+                                    </span>
+                                    <input type="number" name="amount" class="form-control border-start-0" 
+                                        placeholder="0.00" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <label class="form-label fw-semibold text-muted mb-2">
+                                    <i class="fas fa-tags text-primary me-1"></i>Category
+                                </label>
+                                <select name="type" class="form-select" required>
+                                    <option value="">Choose category...</option>
+                                    <option value="Income">💰 Income</option>
+                                    <option value="Expense">💸 Expense</option>
+                                    <option value="Savings">🏦 Savings</option>
+                                    <option value="EmergencyFund">�️ Emergency Fund</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-4 col-md-8">
+                                <label class="form-label fw-semibold text-muted mb-2">
+                                    <i class="fas fa-comment-alt text-info me-1"></i>Description
+                                </label>
+                                <input type="text" name="description" class="form-control" 
+                                    placeholder="What's this transaction for?" required>
+                            </div>
+                            <div class="col-lg-2 col-md-4">
+                                <button type="submit" class="btn btn-modern w-100" 
+                                        style="background-color: var(--success-color); color: white; border: none;">
+                                    <i class="fas fa-plus me-2"></i>Add
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Recent Transactions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card transactions-card shadow-lg fade-in-up" style="animation-delay: 0.9s;">
+                <div class="card-header border-0 d-flex justify-content-between align-items-center" 
+                     style="background-color: var(--primary-color); color: white;">
+                    <div class="d-flex align-items-center text-white">
+                        <i class="fas fa-history fa-lg me-3"></i>
+                        <h5 class="mb-0 fw-bold">📊 Recent Transactions</h5>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <small class="text-white opacity-90 me-3">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <span id="transaction-count">Showing up to 6 entries (scroll to see more)</span>
+                        </small>
+                        <span class="badge bg-light text-primary">Live Updates</span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="fixed-header-table">
+                        <!-- Fixed Header -->
+                        <div class="table-header">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="py-3" style="width: 12%;">
+                                            <i class="fas fa-calendar-alt me-2"></i>Date
+                                        </th>
+                                        <th class="py-3" style="width: 30%;">
+                                            <i class="fas fa-file-alt me-2"></i>Description
+                                        </th>
+                                        <th class="py-3" style="width: 15%;">
+                                            <i class="fas fa-tags me-2"></i>Category
+                                        </th>
+                                        <th class="py-3" style="width: 15%;">
+                                            <i class="fas fa-coins me-2"></i>Amount
+                                        </th>
+                                        <th class="py-3" style="width: 13%;">
+                                            <i class="fas fa-bookmark me-2"></i>Type
+                                        </th>
+                                        <th class="py-3 text-center" style="width: 15%;">
+                                            <i class="fas fa-cogs me-2"></i>Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        
+                        <!-- Scrollable Body -->
+                        <div class="table-body">
+                            <table class="table table-hover mb-0">
+                                <tbody id="transactions-tbody">
+                                    @if (ViewBag.RecentTransactions != null)
+                                    {
+                                        @foreach (var transaction in ViewBag.RecentTransactions)
+                                        {
+                                            <tr data-rec-id="@transaction.RecId">
+                                                <td style="width: 12%;">@transaction.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                                <td class="description-cell" style="width: 30%;">
+                                                    @transaction.Description
+                                                </td>
+                                                <td style="width: 15%;">
+                                                    @if (!string.IsNullOrEmpty(transaction.Income))
+                                                    {
+                                                        <span>Income</span>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(transaction.Expense))
+                                                    {
+                                                        <span>Expense</span>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(transaction.Savings))
+                                                    {
+                                                        <span>Savings</span>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(transaction.EmergencyFund))
+                                                    {
+                                                        <span>Emergency Fund</span>
+                                                    }
+                                                </td>
+                                                <td style="width: 15%;">
+                                                    @if (!string.IsNullOrEmpty(transaction.Income))
+                                                    {
+                                                        <span class="fw-bold text-success">
+                                                            <i class="fas fa-arrow-up me-1"></i>+₱@FormatCurrency(transaction.Income)
+                                                        </span>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(transaction.Expense))
+                                                    {
+                                                        <span class="fw-bold text-danger">
+                                                            <i class="fas fa-arrow-down me-1"></i>-₱@FormatCurrency(transaction.Expense)
+                                                        </span>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(transaction.Savings))
+                                                    {
+                                                        <span class="fw-bold text-primary">
+                                                            <i class="fas fa-piggy-bank me-1"></i>₱@FormatCurrency(transaction.Savings)
+                                                        </span>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(transaction.EmergencyFund))
+                                                    {
+                                                        <span class="fw-bold text-warning">
+                                                            <i class="fas fa-shield-alt me-1"></i>₱@FormatCurrency(transaction.EmergencyFund)
+                                                        </span>
+                                                    }
+                                                </td>
+                                                <td style="width: 13%;">
+                                                    @if (!string.IsNullOrEmpty(transaction.Income))
+                                                    {
+                                                        <span class="badge" style="background-color: var(--success-color); color: white;">
+                                                            <i class="fas fa-wallet me-1"></i>Income
+                                                        </span>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(transaction.Expense))
+                                                    {
+                                                        <span class="badge" style="background-color: var(--danger-color); color: white;">
+                                                            <i class="fas fa-credit-card me-1"></i>Expense
+                                                        </span>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(transaction.Savings))
+                                                    {
+                                                        <span class="badge" style="background-color: var(--info-color); color: white;">
+                                                            <i class="fas fa-piggy-bank me-1"></i>Savings
+                                                        </span>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(transaction.EmergencyFund))
+                                                    {
+                                                        <span class="badge" style="background-color: var(--warning-color); color: white;">
+                                                            <i class="fas fa-shield-alt me-1"></i>Emergency Fund
+                                                        </span>
+                                                    }
+                                                </td>
+                                                <td class="text-center" style="width: 15%;">
+                                                    <div class="btn-group" role="group">
+                                                        <button class="btn btn-sm btn-outline-primary edit-transaction-btn"
+                                                            data-rec-id="@transaction.RecId" data-description="@transaction.Description"
+                                                            data-type="@(!string.IsNullOrEmpty(transaction.Income) ? "Income" : !string.IsNullOrEmpty(transaction.Expense) ? "Expense" : !string.IsNullOrEmpty(transaction.Savings) ? "Savings" : "EmergencyFund")"
+                                                            data-amount="@(!string.IsNullOrEmpty(transaction.Income) ? transaction.Income : !string.IsNullOrEmpty(transaction.Expense) ? transaction.Expense : !string.IsNullOrEmpty(transaction.Savings) ? transaction.Savings : transaction.EmergencyFund)"
+                                                            title="Edit Transaction">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger delete-transaction-btn"
+                                                            data-rec-id="@transaction.RecId"
+                                                            title="Delete Transaction">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-center py-5">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                                    <h6 class="text-muted mb-2">No transactions found</h6>
+                                                    <p class="text-muted small mb-0">Add some income or expenses to get started!</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Edit Transaction Modal -->
+<div class="modal fade" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--border-radius);">
+            <div class="modal-header border-0" style="background-color: var(--primary-color); color: white;">
+                <div class="d-flex align-items-center text-white">
+                    <i class="fas fa-edit fa-lg me-3"></i>
+                    <h5 class="modal-title mb-0 fw-bold" id="editTransactionModalLabel">✏️ Edit Transaction</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="editTransactionForm">
+                    <input type="hidden" id="editRecId" name="recId">
+                    <input type="hidden" id="editOriginalType" name="originalType">
+
+                    <div class="row g-4">
+                        <div class="col-md-12">
+                            <label for="editDescription" class="form-label fw-semibold">
+                                <i class="fas fa-file-alt text-info me-2"></i>Description
+                            </label>
+                            <input type="text" class="form-control" id="editDescription" name="description" 
+                                   placeholder="What's this transaction for?" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="editAmount" class="form-label fw-semibold">
+                                <i class="fas fa-peso-sign text-success me-2"></i>Amount
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">₱</span>
+                                <input type="number" class="form-control" id="editAmount" name="amount" 
+                                       step="0.01" min="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="editType" class="form-label fw-semibold">
+                                <i class="fas fa-tags text-primary me-2"></i>Category
+                            </label>
+                            <select class="form-select" id="editType" name="type" required>
+                                <option value="Income">💰 Income</option>
+                                <option value="Expense">💸 Expense</option>
+                                <option value="Savings">🏦 Savings</option>
+                                <option value="EmergencyFund">�️ Emergency Fund</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 px-4 pb-4">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-modern" id="saveTransactionBtn"
+                        style="background-color: var(--success-color); color: white; border: none;">
+                    <i class="fas fa-save me-2"></i>Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

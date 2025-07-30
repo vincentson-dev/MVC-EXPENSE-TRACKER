@@ -1,0 +1,378 @@
+/* Minimal UI Improvements for Finance Tracker */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --success-color: #27ae60;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --info-color: #3498db;
+    --light-gray: #ecf0f1;
+    --medium-gray: #bdc3c7;
+    --dark-gray: #7f8c8d;
+    --white: #ffffff;
+    --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --border-radius: 8px;
+    --transition: all 0.2s ease;
+}
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* Enhanced body styling */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    margin-bottom: 60px;
+    color: var(--primary-color);
+}
+
+/* Modern card styling */
+.card {
+    border: 1px solid #e9ecef;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-subtle);
+    transition: var(--transition);
+    background: var(--white);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+/* Enhanced title */
+.main-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    background-clip: text;
+    font-weight: 700;
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.main-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 2px;
+    background: var(--primary-color);
+    border-radius: 1px;
+}
+
+/* Enhanced summary cards */
+.summary-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    border-left: 4px solid var(--medium-gray);
+}
+
+.summary-card:hover {
+    border-left-color: var(--primary-color);
+}
+
+.summary-card .card-body {
+    position: relative;
+    z-index: 2;
+}
+
+/* Modern form styling */
+.form-control, .form-select {
+    border-radius: 12px;
+    border: 2px solid rgba(102, 126, 234, 0.1);
+    transition: all 0.3s ease;
+    padding: 12px 16px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.15);
+    transform: translateY(-1px);
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--primary-color);
+}
+
+/* Modern button styling */
+.btn-modern {
+    border-radius: var(--border-radius);
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.btn-modern:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
+    opacity: 0.9;
+}
+
+/* Success button specific styling */
+.btn-modern[style*="--success-color"]:hover {
+    background-color: #219a52 !important; /* Slightly darker green on hover */
+}
+
+/* Enhanced table styling */
+.table th {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Fixed header table styling */
+.fixed-header-table {
+    display: flex;
+    flex-direction: column;
+    height: 400px; /* Set a fixed height for the table container */
+}
+
+.fixed-header-table .table-header {
+    flex-shrink: 0;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.fixed-header-table .table-header table {
+    margin-bottom: 0;
+}
+
+.fixed-header-table .table-header th {
+    border-bottom: none !important;
+}
+
+.fixed-header-table .table-body {
+    flex: 1;
+    overflow-y: auto;
+    border-top: none;
+}
+
+.fixed-header-table .table-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.fixed-header-table .table-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.fixed-header-table .table-body::-webkit-scrollbar-thumb {
+    background: var(--medium-gray);
+    border-radius: 3px;
+}
+
+.fixed-header-table .table-body::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-gray);
+}
+
+.table td {
+    border-color: rgba(0, 0, 0, 0.05);
+    padding: 16px 12px;
+    vertical-align: middle;
+}
+
+.table tbody tr {
+    transition: all 0.3s ease;
+    height: 60px;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+    transform: scale(1.01);
+}
+
+/* Custom scrollbar improvements */
+.table-responsive {
+    max-height: 180px;
+    overflow-y: auto;
+    border-radius: 12px;
+    position: relative;
+}
+
+.table-responsive::-webkit-scrollbar {
+    width: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* Badge enhancements */
+.badge {
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.75rem;
+}
+
+/* Button improvements */
+.btn-sm {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 6px 12px;
+    transition: all 0.3s ease;
+}
+
+.btn-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Table action buttons sizing */
+.table td .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Modal styling */
+.modal-header {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+#editTransactionModal .form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+#editTransactionModal .form-control:focus,
+#editTransactionModal .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.15);
+}
+
+#saveTransactionBtn {
+    background-color: var(--success-color);
+    border: none;
+    transition: transform 0.2s ease-in-out;
+    color: white;
+}
+
+#saveTransactionBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #219a52;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 2rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .summary-card .card-body {
+        text-align: center;
+    }
+}
+
+/* Loading states */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Transaction edit functionality styles */
+.description-cell {
+    min-width: 200px;
+}
+
+.description-input {
+    border: 1px solid #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.edit-btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Smooth transitions for button states */
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
